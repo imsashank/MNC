@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include "../include/global.h"
-#include "../include/logger.h"
+#include "./local/Fall_2021/cse489589_assignment1/sasankya/include/global.h"
+#include "/local/Fall_2021/cse489589_assignment1/sasankya/include/logger.h"
 
 #define MSG_LENGTH 1024
 #define STDIN 0
