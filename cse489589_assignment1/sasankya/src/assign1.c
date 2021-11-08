@@ -79,18 +79,24 @@ int main(int argc, char *argv[]) {
     listening_fd = socket(AF_INET, SOCK_STREAM, 0);
     if(listening_fd == 0)
     {
+        // printf("Server Socket creation failed\n");
         exit(EXIT_FAILURE);
     }
     listen_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     listen_addr.sin_family = AF_INET;
     listen_addr.sin_port = htons(atoi(argv[2]));
-
+    
+    // Binding the socket to a port
     temp_result = bind(listening_fd, (struct sockaddr *)&listen_addr,sizeof(listen_addr));
-    if(temp_result <0) {
+    if(temp_result <0)
+    {
+        //printf("Bind failed\n");
         exit(EXIT_FAILURE);
     }
     temp_result =listen(listening_fd, 4);
-    if(temp_result< 0) {
+    if(temp_result< 0)
+    {
+        //printf( "Listen function failed\n");
         exit(EXIT_FAILURE);
     }
     
@@ -331,10 +337,9 @@ void add_new_client(struct client **head_ref,int fdaccept, struct sockaddr_in cl
 void print_author()
 {
     cse4589_print_and_log("[%s:SUCCESS]\n","AUTHOR");
-    //char *author = (char*) malloc(sizeof(char)*CMD_SIZE);
-    //author = "I, PRIYAMUR, have read and understood the course academic integrity policy.\n";
     
-    cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", "priyamur");
+    
+    cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", "sasank");
     //printf("Success");
     cse4589_print_and_log("[%s:END]\n","AUTHOR");
 }
@@ -806,19 +811,29 @@ void create_client_list(struct client **c_ref, char *buffer)
 void broadcast(struct client *c_ref, char *msg, int server_fd)
 {
     char ip_str[INET_ADDRSTRLEN];
+    //strcpy(ip_str,find_ip(ip_str));
     
     struct sockaddr_in udp;
     int temp_udp =socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     int len = sizeof(udp);
+    //char str[INET_ADDRSTRLEN];
     int result;
+    
+    if (temp_udp == -1)
+    {
+        //printf("Socket creation failed!");
+    }
+    
     memset((char *) &udp, 0, sizeof(udp));
     udp.sin_family = AF_INET;
     udp.sin_port = htons(EPHEMERAL_PORT);
     inet_pton(AF_INET, "8.8.8.8", &udp.sin_addr);
-
+    //udp.sin_addr.s_addr = inet_addr("8.8.8.8");
+    
     if (connect(temp_udp, (struct sockaddr *)&udp, sizeof(udp)) < 0)
     {
-       result = 0;
+        //printf("\nConnection Failed \n");
+        result = 0;
     }
     if (getsockname(temp_udp,(struct sockaddr *)&udp,(unsigned int*) &len) == -1)
     {
@@ -827,6 +842,9 @@ void broadcast(struct client *c_ref, char *msg, int server_fd)
     }
     
     inet_ntop(AF_INET, &(udp.sin_addr), ip_str, len);
+    //printf("%s", str);
+    
+
     int count = 0;
     struct client *temp = c_ref;
     char *send_buf = (char*)malloc(sizeof(char)*MSG_LENGTH);
@@ -837,12 +855,17 @@ void broadcast(struct client *c_ref, char *msg, int server_fd)
         {
             
             strcat(send_buf,client_ip[temp->list_id]);
+           // printf("\n %s",client_ip[temp->list_id]);
             strcat(send_buf," ");
             strcat(send_buf,msg);
+            //strcat(send_buf, "\n");
+          //  printf("%s ' ' %s", client_ip[temp->list_id], msg);
             if(send(server_fd, send_buf, strlen(send_buf),0) > 0 )
                 count+=1;
         }
         temp = temp->next;
+        //free(send_buf);
+        //send_buf = NULL;
     }
     if(count > 0)
     {
@@ -853,6 +876,7 @@ void broadcast(struct client *c_ref, char *msg, int server_fd)
     else
     {
         cse4589_print_and_log("[RELAYED:ERROR]\n");
+        //cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n",from_ip,send_to_ip,buffer);
         cse4589_print_and_log("[RELAYED:END]\n");
         
     }
@@ -915,7 +939,7 @@ int client(struct client **c_ref, int port_no, int listening_fd)
                         
                         if(strcmp(cmd, "AUTHOR\n")==0)
                         {
-                            ();
+                            print_author();
                         }
                         if(strcmp(cmd,IP)==0)
                         {
