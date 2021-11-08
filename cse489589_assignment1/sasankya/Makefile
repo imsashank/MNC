@@ -2,17 +2,17 @@ INC_DIR	= ./include
 SRC_DIR = ./src
 OBJ_DIR	= ./object
 
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
-OBJ_FILES = $(SRC_FILES:.c=.o)
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES = $(SRC_FILES:.cpp=.o)
 OBJ_PATH  = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(OBJ_FILES))
 
 LIBS	= 
-CC	= gcc
-CFLAGS	= -g -I$(INC_DIR) -std=gnu99
+CC	= /usr/bin/g++
+CFLAGS	= -g -I$(INC_DIR)
 
 all: assignment1
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 assignment1: $(OBJ_PATH)
